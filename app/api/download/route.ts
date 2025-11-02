@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
       dumpSingleJson: true,
       noWarnings: true,
       preferFreeFormats: true,
-      noCallHome: true,
       binaryPath: ytPath,
     });
 
