@@ -1,9 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import youtubedl from "youtube-dl-exec";
 
-export async function GET(req) {
+export const runtime = "nodejs";
+
+export async function GET(req: NextRequest) {
   const url = new URL(req.url).searchParams.get("url");
   if (!url) return NextResponse.json({ error: "Missing URL" }, { status: 400 });
+
+  const ytPath = "C:\\Users\\YourName\\AppData\\Roaming\\Python\\Scripts\\yt-dlp.exe";
 
   try {
     const info = await youtubedl(url, {
@@ -11,14 +15,15 @@ export async function GET(req) {
       noWarnings: true,
       preferFreeFormats: true,
       noCallHome: true,
+      binaryPath: ytPath,
     });
 
     return NextResponse.json({
       title: info.title,
       downloadUrl: info.url,
     });
-  } catch (err) {
-    console.error("Download error:", err);
-    return NextResponse.json({ error: "Failed to fetch video" }, { status: 500 });
+  } catch (err: any) {
+    console.error("yt-dlp error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
